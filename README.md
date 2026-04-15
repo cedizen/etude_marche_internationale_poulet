@@ -1,151 +1,54 @@
-Analyse des pays cibles pour l’exportation de poulets
+# Étude de marché internationale : Préparation des données pour le poulet biologique
 
-Objectif du projet
+## Présentation du projet
 
-L’objectif de ce projet est de proposer une analyse des groupements de pays pouvant être ciblés pour l’exportation de poulets, à partir de données internationales en open data.
-Cette première étape vise à segmenter les pays selon des critères économiques, politiques, sociaux et agricoles, afin d’identifier des marchés potentiels avant d’approfondir l’étude de marché.
+Ce projet vise à réaliser une étude de marché internationale pour une entreprise souhaitant commercialiser du poulet biologique à l'échelle mondiale. L'objectif global est d'identifier les pays les plus pertinents pour cette commercialisation, en se basant sur une analyse approfondie des habitudes alimentaires, des politiques agricoles et des dynamiques de marché.
 
-Contexte
+## Rôle de ce Notebook
 
-Dans un contexte de mondialisation des échanges agroalimentaires, le choix des pays cibles est stratégique.
-Ce projet adopte une approche data-driven pour aider à la prise de décision, en combinant :
+Ce notebook est la **première étape cruciale** du projet. Il se concentre exclusivement sur la **préparation et le nettoyage des données** nécessaires à l'analyse décisionnelle.
 
-des données issues de la FAO (Food and Agriculture Organization),
+## Sources de Données
 
-des indicateurs de la Banque mondiale,
+Les données utilisées dans ce notebook proviennent de deux fichiers CSV principaux :
 
-et une analyse multivariée (ACP + clustering).
+*   `DisponibiliteAlimentaire_2017.csv`: Contient les informations détaillées sur la disponibilité alimentaire mondiale pour l'année 2017 (production, importations, exportations, pertes, etc., par produit et par pays).
+*   `Population_2000_2018.csv`: Fournit les données de population par pays de 2000 à 2018.
 
-L’ensemble de l’analyse est réalisé en autonomie, tant sur le choix des variables que sur les sources de données et les méthodes utilisées.
+## Étapes Clés Réalisées
 
-Problématique
+1.  **Exploration Initiale et Chargement des Données**:
+    *   Chargement des fichiers CSV dans des DataFrames Pandas.
+    *   Vérification des structures et des types de données (`.info()`, `.head()`).
+2.  **Nettoyage et Transformation des Données**:
+    *   Sélection des colonnes pertinentes pour chaque DataFrame.
+    *   Pivotage du DataFrame `df_dispo_alimentaire` pour organiser les 'Éléments' comme des colonnes, facilitant l'analyse.
+    *   Renommage des colonnes pour une meilleure lisibilité (`Zone` en `Pays`, `Valeur` en `Population totale`).
+    *   Conversion de la population en valeurs absolues (multiplication par 1000).
+    *   Vérification et gestion des doublons.
+3.  **Fusion et Consolidation**:
+    *   Combinaison des DataFrames `df_population` et `df_dispo_alimentaire_pivot` sur les colonnes `Pays` et `Année` pour créer un jeu de données unifié.
+4.  **Filtrage pour le Produit Cible**:
+    *   Extraction des données spécifiquement relatives à la **'Viande de Volailles'**.
+    *   Sélection des métriques pertinentes pour l'étude de marché.
+5.  **Gestion des Valeurs Manquantes**:
+    *   Identification des valeurs manquantes (`.isna().sum()`).
+    *   Remplacement des valeurs manquantes par `0` pour des variables comme les importations, exportations, production, pertes et traitement, partant de l'hypothèse qu'une absence de donnée signifie une absence d'activité pour éviter de réduire drastiquement l'échantillon de pays.
+6.  **Feature Engineering (Création d'Indicateurs)**:
+    *   Calcul du **Ratio d'importations** (`Importations / (Importations + Production - Exportations - Pertes)`).
+    *   Calcul de la **Balance nette d'approvisionnement** (`Importations - (Exportations - Production)`).
+    *   Calcul du **Ratio de pertes sur production** (`Pertes / Production`).
+    *   Application de logiques métier pour gérer les divisions par zéro et les valeurs non positives dans les calculs de ratios.
+7.  **Validation de la Couverture**:
+    *   Vérification que le jeu de données final couvre un nombre suffisant de pays et un pourcentage pertinent de la population mondiale (critères: >100 pays et >60% de la population mondiale).
 
-Quels groupes de pays présentent des caractéristiques favorables à l’exportation de poulets, et comment peut-on les segmenter de manière objective à partir de données internationales ?
+## Fichier de Sortie
 
-Approche méthodologique
-1️1) Sélection et enrichissement des données
+Le résultat de ce notebook est un fichier CSV nommé `chicken_country.csv`, contenant le jeu de données propre, enrichi et prêt à l'emploi pour les analyses ultérieures.
 
-Point de départ : données FAO (production, consommation, commerce, indicateurs agricoles).
+## Prochaine Étape
 
-Utilisation de l’analyse PESTEL pour identifier de nouvelles variables pertinentes :
+Ce fichier `chicken_country.csv` sera utilisé dans un second notebook pour réaliser :
 
-Politique
-
-Économique
-
-Social
-
-Technologique
-
-Environnemental
-
-Légal
-
-Intégration d’au minimum 8 variables issues de différentes dimensions.
-
-Sources de données :
-
-FAO
-
-Banque mondiale
-
-Données mondiales en open data
-
-2) Préparation et nettoyage des données
-
-Harmonisation des pays et des années
-
-Gestion des valeurs manquantes
-
-Normalisation / standardisation des variables
-
-Fusion des différentes sources dans un fichier unique
-
-Sélection d’un échantillon d’au moins :
-
-100 pays
-
-couvrant au minimum 60 % de la population mondiale
-
-3) Exploration des données (EDA)
-
-Réalisée dans un notebook dédié :
-
-Statistiques descriptives
-
-Analyse des distributions
-
-Visualisations (corrélations, comparaisons entre pays)
-
-Premiers insights globaux
-
-4) Analyse multivariée et segmentation
-
-Réalisée dans un notebook séparé :
-
- - Analyse en Composantes Principales (ACP)
-
-Réduction de dimension
-
-Analyse du cercle des corrélations
-
-Projection des pays dans l’espace factoriel
-
-Interprétation des axes principaux
-
-- Clustering des pays
-
-Classification Ascendante Hiérarchique (CAH)
-
-choix du nombre de clusters
-
-interprétation des groupes
-
-K-means
-
-comparaison avec la CAH
-
-validation des clusters
-
-Les regroupements sont réalisés à partir :
-
-des composantes principales issues de l’ACP ou
-
-des données brutes standardisées.
-
-📊 Résultats attendus
-
-Identification de groupes homogènes de pays
-
-Mise en évidence de profils types (marchés matures, marchés émergents, marchés à risque, etc.)
-
-Base solide pour une future étude de marché approfondie
-
-Aide à la priorisation des pays cibles pour l’exportation
-
-Outils et technologies
-
-Python (pandas, numpy, matplotlib, seaborn, scikit-learn)
-(ou R selon l’implémentation)
-
-Jupyter Notebook
-
-ACP & clustering
-
-Git / GitHub
-
-📂 Structure du projet
-├── data/
-│   ├── raw/              # Données sources (FAO, Banque mondiale…)
-│   └── processed/        # Données nettoyées et fusionnées
-├── notebooks/
-│   ├── 01_exploration.ipynb
-│   └── 02_acp_clustering.ipynb
-├── visuals/
-├── README.md
-
-👤 Auteur
-
-[Cédric BERTHEZENE]
-Data Analyst en formation
-Intérêt particulier pour l’analyse exploratoire, la segmentation et l’aide à la décision basée sur les données.
+*   Une **Analyse en Composantes Principales (ACP)** afin de réduire la dimensionnalité et d'identifier les variables explicatives clés.
+*   Une **segmentation des pays via l'algorithme KMeans** pour regrouper les pays ayant des profils similaires et identifier les marchés potentiels.
