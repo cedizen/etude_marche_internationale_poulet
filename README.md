@@ -9,6 +9,10 @@ Le projet est composé de **deux notebooks complémentaires** :
 - un premier notebook consacré à la **préparation et au nettoyage des données** ;
 - un second notebook dédié à **l’analyse exploratoire, à l’ACP, au clustering et à la recommandation finale**.
 
+---
+![Python](https://img.shields.io/badge/Python-blue?logo=python) ![Jupyter](https://img.shields.io/badge/Jupyter-orange?logo=jupyter) ![Status](https://img.shields.io/badge/Status-Completed-brightgreen)
+---
+
 ## Notebook 1 — Préparation des données
 
 Ce premier notebook transforme les données brutes en un jeu de données propre et exploitable pour l’analyse.
